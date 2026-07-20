@@ -7,7 +7,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const adapter = new PrismaPg({ connectionString: getServerEnv().DATABASE_URL });
+  const databaseUrl = getServerEnv().DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error(
+      "DATABASE_URL is not configured. Connect a Neon PostgreSQL database before importing reviews.",
+    );
+  }
+
+  const adapter = new PrismaPg({ connectionString: databaseUrl });
 
   return new PrismaClient({ adapter });
 }

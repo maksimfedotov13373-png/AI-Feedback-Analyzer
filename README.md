@@ -12,7 +12,7 @@ AI Feedback Analyzer is a B2B MVP that turns customer reviews into structured, e
 
 The current repository contains the project foundation. CSV ingestion, AI analysis, and the report dashboard will be added in separate stages.
 
-CSV ingestion currently supports validation and preview. Persistence is enabled by setting a Neon PostgreSQL `DATABASE_URL` and applying the initial migration.
+CSV ingestion currently supports validation and preview. Persistence is enabled by setting a Neon PostgreSQL `DATABASE_URL` and applying the initial migration. The app can be deployed to Vercel before Neon is connected; preview works without a database, while import remains disabled until `DATABASE_URL` is configured.
 
 ## Stack
 
@@ -38,7 +38,7 @@ Install dependencies:
 npm install
 ```
 
-Create the local environment file and set `DATABASE_URL` to a managed PostgreSQL database such as Neon or Supabase:
+Create the local environment file. `DATABASE_URL` is optional for running the UI and CSV preview, but required for importing reviews:
 
 ```bash
 cp .env.example .env
@@ -56,7 +56,7 @@ Generate the Prisma client:
 npm run db:generate
 ```
 
-The initial migration will be created when a development PostgreSQL database is connected during the CSV ingestion stage.
+The initial migration will be created after a Neon PostgreSQL database is connected.
 
 Start the application:
 
@@ -79,6 +79,25 @@ npm run db:studio
 ```
 
 The production build generates the Prisma client automatically before compiling Next.js, so generated database code is not committed to Git.
+
+## Deploy to Vercel
+
+1. Push the repository to GitHub.
+2. In Vercel, select `Add New Project` and import `AI-Feedback-Analyzer`.
+3. Keep the framework preset as `Next.js` and leave the root directory as `.`.
+4. Use the default build command: `npm run build`.
+5. Deploy without environment variables if you only need the UI and CSV preview.
+6. Create a Neon project when you are ready to enable persistence.
+7. Add the Neon pooled connection string in Vercel under `Settings -> Environment Variables` as `DATABASE_URL` for Production, Preview, and Development.
+8. Redeploy after adding `DATABASE_URL`.
+
+For the first database migration, run locally with the Neon URL in `.env`:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Commit the generated `prisma/migrations` directory and push it to GitHub. Later deployments should apply committed migrations through the deployment workflow rather than using `prisma migrate dev` in the Vercel build.
 
 ## Database strategy
 

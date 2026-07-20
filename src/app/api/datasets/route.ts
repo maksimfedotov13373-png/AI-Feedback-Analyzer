@@ -106,6 +106,13 @@ export async function POST(request: Request) {
     }
 
     console.error("Dataset import failed", error);
+    if (error instanceof Error && error.message.includes("DATABASE_URL is not configured")) {
+      return errorResponse(
+        "Neon is not connected yet. Add DATABASE_URL in Vercel or your local .env before importing reviews.",
+        503,
+      );
+    }
+
     return errorResponse(
       "The reviews could not be saved. Check the database connection and try again.",
       503,
