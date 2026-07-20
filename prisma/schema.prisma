@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DatasetStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum InsightType {
+  THEME
+  PAIN_POINT
+  FEATURE_REQUEST
+  POSITIVE_SIGNAL
+  RECOMMENDATION
+}
+
+enum InsightPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+  MIXED
+}
+
+model Dataset {
+  id               String        @id @default(cuid())
+  name             String
+  status           DatasetStatus @default(UPLOADED)
+  originalFileName String
+  reviewCount      Int           @default(0)
+  language         String?
+  errorMessage     String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  reviews          Review[]
+  analyses         Analysis[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Review {
+  id         String    @id @default(cuid())
+  datasetId  String
+  text       String
+  rating     Decimal?  @db.Decimal(3, 2)
+  source     String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  dataset    Dataset   @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@index([datasetId])
+}
+
+model Analysis {
+  id            String         @id @default(cuid())
+  datasetId     String
+  status        AnalysisStatus @default(PENDING)
+  provider      String
+  model         String
+  promptVersion String
+  errorMessage  String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  dataset       Dataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  report        Report?
+
+  @@index([datasetId])
+  @@index([status])
+}
+
+model Report {
+  id             String    @id @default(cuid())
+  analysisId     String    @unique
+  summary        String
+  sentimentStats Json
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+  analysis       Analysis  @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  insights       Insight[]
+}
+
+model Insight {
+  id             String          @id @default(cuid())
+  reportId       String
+  type           InsightType
+  title          String
+  description    String
+  priority       InsightPriority @default(MEDIUM)
+  frequency      Int?
+  sentiment      Sentiment?
+  evidence       Json?
+  recommendation String?
+  createdAt      DateTime        @default(now())
+  report         Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId, type])
+  @@index([priority])
+}
