@@ -78,7 +78,7 @@ npm run db:migrate
 npm run db:studio
 ```
 
-The production build generates the Prisma client, applies committed migrations when `DATABASE_URL` is available, and then compiles Next.js. Generated database code is not committed to Git.
+The local production build generates the Prisma client and compiles Next.js. Vercel uses `npm run vercel-build`, which applies committed migrations before compiling the application. Generated database code is not committed to Git.
 
 ## Deploy to Vercel
 
