@@ -78,7 +78,7 @@ npm run db:migrate
 npm run db:studio
 ```
 
-The production build generates the Prisma client automatically before compiling Next.js, so generated database code is not committed to Git.
+The production build generates the Prisma client, applies committed migrations when `DATABASE_URL` is available, and then compiles Next.js. Generated database code is not committed to Git.
 
 ## Deploy to Vercel
 
@@ -91,13 +91,13 @@ The production build generates the Prisma client automatically before compiling 
 7. Add the Neon pooled connection string in Vercel under `Settings -> Environment Variables` as `DATABASE_URL` for Production, Preview, and Development.
 8. Redeploy after adding `DATABASE_URL`.
 
-For the first database migration, run locally with the Neon URL in `.env`:
+For local schema changes, create a migration with the Neon URL in `.env`:
 
 ```bash
 npx prisma migrate dev --name init
 ```
 
-Commit the generated `prisma/migrations` directory and push it to GitHub. Later deployments should apply committed migrations through the deployment workflow rather than using `prisma migrate dev` in the Vercel build.
+Commit the generated `prisma/migrations` directory and push it to GitHub. Vercel applies committed migrations with `prisma migrate deploy` before building Next.js.
 
 ## Database strategy
 
