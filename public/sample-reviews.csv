@@ -1,0 +1,9 @@
+text,rating,date,source
+"The onboarding was quick and the dashboard is easy to understand.",5,2026-05-12,Product survey
+"Support resolved my billing question within an hour.",5,2026-05-18,Support follow-up
+"Reports are useful, but exporting them takes too many steps.",3,2026-05-21,In-app feedback
+"The product works as expected. I have not used the analytics yet.",3,2026-05-24,Email survey
+"The mobile experience is slow and sometimes loses my changes.",1,2026-06-02,App review
+"I cannot find a way to filter results by customer segment.",2,2026-06-07,Feature request
+"Weekly summaries save our team several hours of manual work.",5,2026-06-14,Customer interview
+"Setup documentation needs clearer examples for integrations.",2,2026-06-20,Support ticket

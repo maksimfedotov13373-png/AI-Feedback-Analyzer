@@ -12,6 +12,8 @@ AI Feedback Analyzer is a B2B MVP that turns customer reviews into structured, e
 
 The current repository contains the project foundation. CSV ingestion, AI analysis, and the report dashboard will be added in separate stages.
 
+CSV ingestion currently supports validation and preview. Persistence is enabled by setting a Neon PostgreSQL `DATABASE_URL` and applying the initial migration.
+
 ## Stack
 
 - Next.js App Router
@@ -91,6 +93,17 @@ The application targets PostgreSQL through Prisma, but the foundation does not r
 - `Insight`: a theme, pain point, feature request, positive signal, or recommendation.
 
 Flexible AI aggregates are stored as PostgreSQL JSON while core entities and lifecycle states remain relational.
+
+## CSV format
+
+The CSV must use UTF-8 encoding and include a `text` column. It may also include `rating`, `date`, and `source`.
+
+- Maximum file size: 5 MB
+- Maximum review count: 500
+- Rating range: 0 to 5
+- The original CSV is not stored
+
+A test file is available at `public/sample-reviews.csv` and can be downloaded from the upload screen.
 
 ## Architecture
 
